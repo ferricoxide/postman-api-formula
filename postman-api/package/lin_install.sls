@@ -5,13 +5,24 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as postman_api with context %}
 
-Create Postman Symlink:
-  file.symlink:
-    - force: True
+Deploy Postman Wrapper Script:
+  file.managed:
+    - contents: |
+        #!/bin/bash
+        FLAGS=("--log-level=3")
+        # Disable GPU if connected via SSH or an X11 tunnel
+        if [ -n "$SSH_CLIENT" ] || \
+           [ -n "$SSH_TTY" ] || \
+           [[ "$DISPLAY" =~ ^localhost ]]; then
+          FLAGS+=("--disable-gpu")
+        fi
+        exec /opt/Postman/Postman "${FLAGS[@]}" "$@" 2>/dev/null
+    - group: 'root'
+    - mode: '0755'
     - name: '/usr/local/bin/postman'
     - require:
       - archive: 'Extract Postman Archive'
-    - target: '/opt/Postman/Postman'
+    - user: 'root'
 
 Extract Postman Archive:
   archive.extracted:
@@ -68,4 +79,5 @@ Install Postman Dependencies:
       - nss-tools
       - pango
       - vulkan-loader
+      - xdg-utils
       - xorg-x11-xauth
