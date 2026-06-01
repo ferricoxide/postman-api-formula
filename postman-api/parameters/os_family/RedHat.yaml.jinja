@@ -1,0 +1,17 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+#
+# Set values specific to the RedHat family based on OS major version.
+---
+values:
+  config: {}
+  pkg:
+    download_sig: ''
+    {%- if salt['grains.get']('osmajorrelease') | int == 9 %}
+    download_uri: 'https://dl.pstmn.io/download/version/10.24.26/linux64'
+    {%- else %}
+    download_uri: 'https://dl.pstmn.io/download/latest/linux_64'
+    {%- endif %}
+    name: 'postman-api'
+  service: {}
+...
