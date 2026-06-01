@@ -5,14 +5,9 @@
 ---
 values:
   pkg:
-    name: postman-api
-  rootgroup: root
-  config: '/etc/postman-api'
-  service:
-    name: postman-api
-  subcomponent:
-    config: '/etc/postman-api-subcomponent-formula.conf'
-  # Just here for testing
-  added_in_defaults: defaults_value
-  winner: defaults
+    name: 'postman-api'
+    download_uri: ''
+    download_sig: ''
+  config: {}
+  service: {}
 ...

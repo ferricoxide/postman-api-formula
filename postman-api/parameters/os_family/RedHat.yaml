@@ -13,6 +13,9 @@
 ---
 values:
   pkg:
-    name: postman-api-redhat
-  config: /etc/postman-api.conf
+    name: 'postman-api'
+    download_uri: 'https://dl.pstmn.io/download/latest/linux_64'
+    download_sig: ''
+  config: {}
+  service: {}
 ...
