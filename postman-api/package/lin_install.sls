@@ -5,13 +5,19 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as postman_api with context %}
 
-Create Postman Symlink:
-  file.symlink:
-    - force: True
+Deploy Postman Wrapper Script:
+  file.managed:
+    - contents: |
+        #!/bin/bash
+        RHLIB="/opt/rh/gcc-toolset-13/root/usr/lib64"
+        export LD_LIBRARY_PATH="$RHLIB:${LD_LIBRARY_PATH:-}"
+        exec /opt/Postman/Postman "$@"
+    - group: 'root'
+    - mode: '0755'
     - name: '/usr/local/bin/postman'
     - require:
       - archive: 'Extract Postman Archive'
-    - target: '/opt/Postman/Postman'
+    - user: 'root'
 
 Extract Postman Archive:
   archive.extracted:
@@ -42,6 +48,7 @@ Install Postman Dependencies:
       - cups-libs
       - dbus-glib
       - dejavu-sans-fonts
+      - gcc-toolset-13-runtime
       - gdk-pixbuf2
       - gtk3
       - libX11
