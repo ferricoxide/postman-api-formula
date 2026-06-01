@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### 0.0.1
 
-**Released**: 2026.05.22
+**Released**: 2026.06.01
 
 **Summary**:
 
