@@ -48,6 +48,10 @@ Executes _just_ the `config` state to uninstall the Postman API client-configura
 
 ## Compatibility Notes:
 
+### Linux
+
+1. Due to library compatibilities, the installable version of Postman on RHEL 9 (and derivatives) is constrained to < `11.x`. This formula defaults the RHEL 9 (and derivatives) installation to Postman version `10.24.26`
+
 
 [^1]: As of this README's writing, only Enterprise Linux and related distros (Red Hat and Oracle Enterprise, CentOS Stream, Rocky and Alma Linux). It has only been specifically tested with EL **_9_** variants.
 [^2]: As of this README's writing, this functionality has only been tested on Windows Server 2022
