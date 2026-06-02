@@ -6,12 +6,6 @@
 {%- from tplroot ~ "/map.jinja" import mapdata as postman_api with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
 
-{%- set shortcut_sources = files_switch(
-      ['postman.desktop', 'postman.desktop.jinja'],
-      lookup='Configure Postman Desktop Shortcut'
-    )
-%}
-
 Configure Postman Desktop Shortcut:
   file.managed:
     - context:
@@ -20,6 +14,14 @@ Configure Postman Desktop Shortcut:
     - makedirs: True
     - mode: '0644'
     - name: {{ postman_api.config.desktop_entry }}
-    - source: {{ shortcut_sources }}
+    - source:
+{{ files_switch(['postman.desktop', 'postman.desktop.jinja'],
+                lookup='desktop_shortcut') }}
     - template: 'jinja'
     - user: 'root'
+
+Register Protocol Deep Linking:
+  cmd.run:
+    - name: '{{ postman_api.config.update_mime_database }} /usr/share/applications'
+    - onchanges:
+      - file: 'Configure Postman Desktop Shortcut'
