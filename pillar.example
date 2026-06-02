@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+---
+postman-api:
+  config:
+    # Path where the system desktop entry file will be generated.
+    desktop_entry: '/usr/share/applications/postman.desktop'
+
+    # Relative path to the application icon inside the installation directory.
+    icon_source: '/app/resources/app/assets/icon.png'
+
+    # The root directory tree where the application archive is extracted.
+    # Natively supports paths containing spaces (e.g., '/opt/Desktop Apps/Postman').
+    install_root: '/opt/Postman'
+
+    # Controls Chromium's internal application isolation sandbox layer.
+    # Set to false to support profiles that disable unprivileged namespaces
+    # (such as DISA STIG or CIS benchmarks), allowing safe startup.
+    sandbox_enabled: false
+
+    # The SELinux context type applied to the application root directory.
+    # Automatically triggers fcontext and restorecon operations if the
+    # kernel security subsystem is running in Enforcing or Permissive mode.
+    selinux_fcontext: 'usr_t'
+
+    # Mandates the minimum TLS protocol allowed for transit connections.
+    # Ensures compliance with FIPS validation rules by preventing downgrades.
+    ssl_min_version: 'tls1.2'
+
+    # Path to the system binary utility that updates the desktop MIME cache.
+    update_mime_database: '/usr/bin/update-desktop-database'
+
+    # Controls registration of trusted application paths with fapolicyd.
+    # Set to true to inject execution rules when whitelisting is enabled.
+    whitelist_enabled: true
+
+    # The system path for the generated wrapper execution bash script.
+    wrapper_bin: '/usr/local/bin/postman'
+
+  pkg:
+    # Optional cryptographic hash string (e.g., sha256) to verify the source.
+    # Leave empty to skip verification when pulling dynamic latest payloads.
+    download_sig: ''
+
+    # The fully qualified URI source pointing to the target install archive.
+    # Can point to the public CDN or an internally hosted mirror repository.
+    download_uri: 'https://dl.pstmn.io/download/version/10.24.26/linux64'
+
+    # The internal name designation used for formula mapping identification.
+    name: 'postman-api'
+...
