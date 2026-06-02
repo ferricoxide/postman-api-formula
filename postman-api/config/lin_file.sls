@@ -6,6 +6,9 @@
 {%- from tplroot ~ "/map.jinja" import mapdata as postman_api with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
 
+{#- Dynamically check if the host has the SELinux kernel subsystem live #}
+{%- set selinux_live = salt['grains.get']('selinux:enabled', False) %}
+
 Configure Postman Desktop Shortcut:
   file.managed:
     - context:
@@ -19,6 +22,14 @@ Configure Postman Desktop Shortcut:
                 lookup='desktop_shortcut') }}
     - template: 'jinja'
     - user: 'root'
+
+{%- if selinux_live and postman_api.config.get('selinux_fcontext', False) %}
+Configure Postman SELinux File Contexts:
+  selinux.fcontext_policy_present:
+    - filetype: 'a'
+    - name: '{{ postman_api.config.install_root }}(/.*)?'
+    - sel_type: {{ postman_api.config.selinux_fcontext }}
+{%- endif %}
 
 {%- if postman_api.config.get('whitelist_enabled', False) %}
 Configure Whitelist Daemon Policy:
@@ -48,7 +59,7 @@ Register Protocol Deep Linking:
     - onchanges:
       - file: 'Configure Postman Desktop Shortcut'
 
-{%- if postman_api.config.get('selinux_restorecon', False) %}
+{%- if selinux_live %}
 {%- set root_path = postman_api.config.install_root %}
 {%- set wrap_path = postman_api.config.wrapper_bin %}
 Restore SELinux Security Contexts:
@@ -56,6 +67,9 @@ Restore SELinux Security Contexts:
     - name: 'restorecon -R {{ root_path }} {{ wrap_path }}'
     - onchanges:
       - file: 'Configure Postman Desktop Shortcut'
+      {%- if postman_api.config.get('selinux_fcontext', False) %}
+      - selinux: 'Configure Postman SELinux File Contexts'
+      {%- endif %}
 {%- endif %}
 
 Suppress Automatic Updates Globally:

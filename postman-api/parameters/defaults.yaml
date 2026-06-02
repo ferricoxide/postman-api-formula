@@ -9,7 +9,7 @@ values:
     icon_source: ''
     install_root: ''
     sandbox_enabled: true
-    selinux_restorecon: false
+    selinux_fcontext: ''
     update_mime_database: ''
     whitelist_enabled: false
     wrapper_bin: ''
