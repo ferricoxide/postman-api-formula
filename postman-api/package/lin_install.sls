@@ -21,9 +21,9 @@ Deploy Postman Wrapper Script:
         FLAGS+=("--ssl-version-min={{ postman_api.config.ssl_min_version }}")
         {%- endif %}
         # Disable GPU if connected via SSH or an X11 tunnel
-        if [ -n "$SSH_CLIENT" ] || \
-           [ -n "$SSH_TTY" ] || \
-           [[ "$DISPLAY" =~ ^localhost ]];
+        if  [[ -n "$SSH_CLIENT" ]] || \
+            [[ -n "$SSH_TTY" ]] || \
+            [[ "$DISPLAY" =~ ^localhost ]]
         then
           FLAGS+=("--disable-gpu")
         fi
