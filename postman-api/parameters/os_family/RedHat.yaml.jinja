@@ -4,7 +4,11 @@
 # Set values specific to the RedHat family based on OS major version.
 ---
 values:
-  config: {}
+  config:
+    desktop_entry: '/usr/share/applications/postman.desktop'
+    icon_source: '/app/resources/app/assets/icon.png'
+    install_root: '/opt/Postman'
+    wrapper_bin: '/usr/local/bin/postman'
   pkg:
     download_sig: ''
     {%- if salt['grains.get']('osmajorrelease') | int == 9 %}

@@ -4,10 +4,14 @@
 # Set default values.
 ---
 values:
+  config:
+    desktop_entry: ''
+    icon_source: ''
+    install_root: ''
+    wrapper_bin: ''
   pkg:
-    name: 'postman-api'
-    download_uri: ''
     download_sig: ''
-  config: {}
+    download_uri: ''
+    name: 'postman-api'
   service: {}
 ...
