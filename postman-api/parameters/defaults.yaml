@@ -8,6 +8,7 @@ values:
     desktop_entry: ''
     icon_source: ''
     install_root: ''
+    update_mime_database: ''
     wrapper_bin: ''
   pkg:
     download_sig: ''
