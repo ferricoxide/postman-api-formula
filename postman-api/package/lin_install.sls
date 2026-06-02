@@ -10,6 +10,9 @@ Deploy Postman Wrapper Script:
     - contents: |
         #!/bin/bash
         FLAGS=("--log-level=3")
+        {%- if not postman_api.config.get('sandbox_enabled', True) %}
+        FLAGS+=("--no-sandbox")
+        {%- endif %}
         {%- if postman_api.config.get('ssl_min_version', False) %}
         FLAGS+=("--ssl-version-min={{ postman_api.config.ssl_min_version }}")
         {%- endif %}
