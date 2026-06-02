@@ -8,7 +8,10 @@ values:
     desktop_entry: ''
     icon_source: ''
     install_root: ''
+    sandbox_enabled: true
+    selinux_restorecon: false
     update_mime_database: ''
+    whitelist_enabled: false
     wrapper_bin: ''
   pkg:
     download_sig: ''
