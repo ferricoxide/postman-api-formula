@@ -42,6 +42,7 @@ Configure Whitelist Daemon Policy:
     - makedirs: True
     - mode: '0644'
     - name: '/etc/fapolicyd/rules.d/95-postman.rules'
+    - onlyif: 'command -v fapolicyd-cli'
     - user: 'root'
 {%- endif %}
 
@@ -51,6 +52,7 @@ Refresh Whitelist Daemon Database:
     - name: 'fapolicyd-cli --update'
     - onchanges:
       - file: 'Configure Whitelist Daemon Policy'
+    - onlyif: 'command -v fapolicyd-cli'
 {%- endif %}
 
 Register Protocol Deep Linking:
