@@ -5,6 +5,10 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as postman_api with context %}
 
+{#- Calculate the parent directory for extraction destination drops #}
+{%- set install_dir = postman_api.config.install_root %}
+{%- set parent_dir = install_dir.split('/')[:-1] | join('/') %}
+
 Deploy Postman Wrapper Script:
   file.managed:
     - contents: |
@@ -23,10 +27,10 @@ Deploy Postman Wrapper Script:
         then
           FLAGS+=("--disable-gpu")
         fi
-        exec /opt/Postman/Postman "${FLAGS[@]}" "$@" 2>/dev/null
+        exec {{ install_dir }}/Postman "${FLAGS[@]}" "$@" 2>/dev/null
     - group: 'root'
     - mode: '0755'
-    - name: '/usr/local/bin/postman'
+    - name: '{{ postman_api.config.wrapper_bin }}'
     - require:
       - archive: 'Extract Postman Archive'
     - user: 'root'
@@ -37,7 +41,7 @@ Extract Postman Archive:
     - enforce_toplevel: False
     - group: 'root'
     - keep_source: False
-    - name: '/opt'
+    - name: '{{ parent_dir }}'
     - require:
       - pkg: 'Install Postman Dependencies'
     {%- if postman_api.pkg.download_sig %}
