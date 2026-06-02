@@ -75,11 +75,6 @@ Restore SELinux Security Contexts:
 {%- endif %}
 
 Suppress Automatic Updates Globally:
-  file.managed:
-    - contents: |
-        # Suppress automatic update background downloads for Postman
-        export POSTMAN_DISABLE_AUTO_UPDATES=true
-    - group: 'root'
-    - mode: '0644'
-    - name: '/etc/profile.d/postman_enterprise.sh'
-    - user: 'root'
+  host.present:
+    - ip: '127.0.0.1'
+    - name: 'dl.pstmn.io'
