@@ -10,10 +10,14 @@ Deploy Postman Wrapper Script:
     - contents: |
         #!/bin/bash
         FLAGS=("--log-level=3")
+        {%- if postman_api.config.get('ssl_min_version', False) %}
+        FLAGS+=("--ssl-version-min={{ postman_api.config.ssl_min_version }}")
+        {%- endif %}
         # Disable GPU if connected via SSH or an X11 tunnel
         if [ -n "$SSH_CLIENT" ] || \
            [ -n "$SSH_TTY" ] || \
-           [[ "$DISPLAY" =~ ^localhost ]]; then
+           [[ "$DISPLAY" =~ ^localhost ]];
+        then
           FLAGS+=("--disable-gpu")
         fi
         exec /opt/Postman/Postman "${FLAGS[@]}" "$@" 2>/dev/null
