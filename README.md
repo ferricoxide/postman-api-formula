@@ -51,6 +51,7 @@ Executes _just_ the `config` state to uninstall the Postman API client-configura
 ### Linux
 
 1. Due to library compatibilities, the installable version of Postman on RHEL 9 (and derivatives) is constrained to < `11.x`. This formula defaults the RHEL 9 (and derivatives) installation to Postman version `10.24.26`
+1. To support hardened enterprise baselines (such as the DISA STIG or CIS profiles), this formula defaults to disabling the Chromium application sandbox (`sandbox_enabled: false`) on Red Hat family distributions. These security profiles typically disable unprivileged user namespaces (`user.max_user_namespaces = 0`), which causes Electron-based applications to crash instantly on startup. For less restrictive environments where user namespaces are permitted, the sandbox can be safely re-enabled by setting `sandbox_enabled: true` via Pillar data.
 
 
 [^1]: As of this README's writing, only Enterprise Linux and related distros (Red Hat and Oracle Enterprise, CentOS Stream, Rocky and Alma Linux). It has only been specifically tested with EL **_9_** variants.
