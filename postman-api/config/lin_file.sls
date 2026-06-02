@@ -16,28 +16,31 @@ Configure Postman Desktop Shortcut:
     - group: 'root'
     - makedirs: True
     - mode: '0644'
-    - name: {{ postman_api.config.desktop_entry }}
+    - name: '{{ postman_api.config.desktop_entry }}'
     - source:
 {{ files_switch(['postman.desktop', 'postman.desktop.jinja'],
                 lookup='desktop_shortcut') }}
     - template: 'jinja'
     - user: 'root'
 
-{%- if selinux_live and postman_api.config.get('selinux_fcontext', False) %}
+{%- if postman_api.config.get('selinux_fcontext', False) and selinux_live %}
 Configure Postman SELinux File Contexts:
   selinux.fcontext_policy_present:
     - filetype: 'a'
-    - name: '{{ postman_api.config.install_root }}(/.*)?'
+    - name: '{{ postman_api.config.install_root | replace(" ", "\s") }}(/.*)?'
     - sel_type: {{ postman_api.config.selinux_fcontext }}
 {%- endif %}
 
 {%- if postman_api.config.get('whitelist_enabled', False) %}
+{#- Escape whitespaces specifically to satisfy strict fapolicyd syntax rules -#}
+{%- set fapolicyd_root = postman_api.config.install_root | replace(' ', '\ ') %}
+{%- set fapolicyd_wrap = postman_api.config.wrapper_bin | replace(' ', '\ ') %}
 Configure Whitelist Daemon Policy:
   file.managed:
     - contents: |
         # Allow execution of system-wide Postman binaries and libraries
-        allow perm=any uid=all : dir={{ postman_api.config.install_root }}/
-        allow perm=any uid=all : path={{ postman_api.config.wrapper_bin }}
+        allow perm=any uid=all : dir={{ fapolicyd_root }}/
+        allow perm=any uid=all : path={{ fapolicyd_wrap }}
     - group: 'root'
     - makedirs: True
     - mode: '0644'
@@ -46,14 +49,12 @@ Configure Whitelist Daemon Policy:
     - user: 'root'
 {%- endif %}
 
-{%- if postman_api.config.get('whitelist_enabled', False) %}
 Refresh Whitelist Daemon Database:
   cmd.run:
     - name: 'fapolicyd-cli --update'
     - onchanges:
       - file: 'Configure Whitelist Daemon Policy'
     - onlyif: 'command -v fapolicyd-cli'
-{%- endif %}
 
 Register Protocol Deep Linking:
   cmd.run:
@@ -66,12 +67,13 @@ Register Protocol Deep Linking:
 {%- set wrap_path = postman_api.config.wrapper_bin %}
 Restore SELinux Security Contexts:
   cmd.run:
-    - name: 'restorecon -R {{ root_path }} {{ wrap_path }}'
+    - name: 'restorecon -R "{{ root_path }}" "{{ wrap_path }}"'
     - onchanges:
       - file: 'Configure Postman Desktop Shortcut'
       {%- if postman_api.config.get('selinux_fcontext', False) %}
       - selinux: 'Configure Postman SELinux File Contexts'
       {%- endif %}
+    - onlyif: 'test -d "{{ root_path }}" && test -e "{{ wrap_path }}"'
 {%- endif %}
 
 Suppress Automatic Updates Globally:

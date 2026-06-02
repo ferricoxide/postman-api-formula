@@ -17,12 +17,12 @@ Refresh Whitelist Daemon Database:
 
 Remove Postman Desktop Shortcut:
   file.absent:
-    - name: {{ postman_api.config.desktop_entry }}
+    - name: '{{ postman_api.config.desktop_entry }}'
 
 {%- if postman_api.config.get('selinux_fcontext', False) and selinux_live %}
 Remove Postman SELinux File Contexts:
   selinux.fcontext_policy_absent:
-    - name: '{{ postman_api.config.install_root }}(/.*)?'
+    - name: '{{ postman_api.config.install_root | replace(" ", "\s") }}(/.*)?'
 {%- endif %}
 
 Remove Protocol Deep Linking Registration:

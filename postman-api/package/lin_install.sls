@@ -27,7 +27,7 @@ Deploy Postman Wrapper Script:
         then
           FLAGS+=("--disable-gpu")
         fi
-        exec {{ install_dir }}/Postman "${FLAGS[@]}" "$@" 2>/dev/null
+        exec "{{ install_dir }}/Postman" "${FLAGS[@]}" "$@" 2>/dev/null
     - group: 'root'
     - mode: '0755'
     - name: '{{ postman_api.config.wrapper_bin }}'
@@ -43,6 +43,7 @@ Extract Postman Archive:
     - keep_source: False
     - name: '{{ parent_dir }}'
     - require:
+      - host: 'Permit Download Domain Access'
       - pkg: 'Install Postman Dependencies'
     {%- if postman_api.pkg.download_sig %}
     - source: '{{ postman_api.pkg.download_uri }}'
@@ -92,3 +93,8 @@ Install Postman Dependencies:
       - vulkan-loader
       - xdg-utils
       - xorg-x11-xauth
+
+Permit Download Domain Access:
+  host.absent:
+    - ip: '127.0.0.1'
+    - name: 'dl.pstmn.io'

@@ -7,8 +7,8 @@
 
 Remove Postman Application Directory:
   file.absent:
-    - name: {{ postman_api.config.install_root }}
+    - name: '{{ postman_api.config.install_root }}'
 
 Remove Postman Wrapper Script:
   file.absent:
-    - name: {{ postman_api.config.wrapper_bin }}
+    - name: '{{ postman_api.config.wrapper_bin }}'
