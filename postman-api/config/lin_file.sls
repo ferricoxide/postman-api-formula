@@ -20,8 +20,50 @@ Configure Postman Desktop Shortcut:
     - template: 'jinja'
     - user: 'root'
 
+{%- if postman_api.config.get('whitelist_enabled', False) %}
+Configure Whitelist Daemon Policy:
+  file.managed:
+    - contents: |
+        # Allow execution of system-wide Postman binaries and libraries
+        allow perm=any uid=all : dir={{ postman_api.config.install_root }}/
+        allow perm=any uid=all : path={{ postman_api.config.wrapper_bin }}
+    - group: 'root'
+    - makedirs: True
+    - mode: '0644'
+    - name: '/etc/fapolicyd/rules.d/95-postman.rules'
+    - user: 'root'
+{%- endif %}
+
+{%- if postman_api.config.get('whitelist_enabled', False) %}
+Refresh Whitelist Daemon Database:
+  cmd.run:
+    - name: 'fapolicyd-cli --update'
+    - onchanges:
+      - file: 'Configure Whitelist Daemon Policy'
+{%- endif %}
+
 Register Protocol Deep Linking:
   cmd.run:
     - name: '{{ postman_api.config.update_mime_database }} /usr/share/applications'
     - onchanges:
       - file: 'Configure Postman Desktop Shortcut'
+
+{%- if postman_api.config.get('selinux_restorecon', False) %}
+{%- set root_path = postman_api.config.install_root %}
+{%- set wrap_path = postman_api.config.wrapper_bin %}
+Restore SELinux Security Contexts:
+  cmd.run:
+    - name: 'restorecon -R {{ root_path }} {{ wrap_path }}'
+    - onchanges:
+      - file: 'Configure Postman Desktop Shortcut'
+{%- endif %}
+
+Suppress Automatic Updates Globally:
+  file.managed:
+    - contents: |
+        # Suppress automatic update background downloads for Postman
+        export POSTMAN_DISABLE_AUTO_UPDATES=true
+    - group: 'root'
+    - mode: '0644'
+    - name: '/etc/profile.d/postman_enterprise.sh'
+    - user: 'root'
