@@ -41,7 +41,7 @@ $PostmanExePath = Join-Path $InstallRoot 'Postman.exe'
 if (Test-Path $PostmanExePath) {
     $FileInfo = Get-Item $PostmanExePath
     $InstalledProductVersion = $FileInfo.VersionInfo.ProductVersion
-    
+
     $IsVendorUrl = $DownloadUri -like '*dl.pstmn.io*'
     if ($TargetVersion -eq 'latest' -and $IsVendorUrl) {
         $BaseUrl = 'https://dl.pstmn.io/update/status'
@@ -56,7 +56,7 @@ if (Test-Path $PostmanExePath) {
             $TargetVersion = $UpdateStatus.version
         }
     }
-    
+
     $IsLatestMatched = $TargetVersion -eq 'latest'
     $IsVersionMatch = $InstalledProductVersion -match $TargetVersion
     if ($IsLatestMatched -or $IsVersionMatch) {
@@ -118,7 +118,16 @@ foreach ($Name in $KillList) {
 }
 
 if (Test-Path $SourceDir) {
-    if (!(Test-Path $InstallRoot)) {
+    if (Test-Path $InstallRoot) {
+        # Purge existing installations completely to prevent directory bloat
+        $PurgeArgs = @{
+            ErrorAction = 'SilentlyContinue'
+            Force       = $true
+            Path        = Join-Path $InstallRoot '*'
+            Recurse     = $true
+        }
+        Remove-Item @PurgeArgs
+    } else {
         $DirArgs = @{
             Force    = $true
             ItemType = 'Directory'
@@ -126,6 +135,7 @@ if (Test-Path $SourceDir) {
         }
         New-Item @DirArgs
     }
+
     $CopyArgs = @{
         Destination = $InstallRoot
         Force       = $true
