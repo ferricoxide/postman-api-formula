@@ -12,6 +12,11 @@ values:
     selinux_fcontext: 'usr_t'
     ssl_min_version: 'tls1.2'
     update_mime_database: '/usr/bin/update-desktop-database'
+    {%- if salt['grains.get']('osmajorrelease') | int == 9 %}
+    version: '10.24.26'
+    {%- else %}
+    version: 'latest'
+    {%- endif %}
     whitelist_enabled: true
     wrapper_bin: '/usr/local/bin/postman'
   pkg:

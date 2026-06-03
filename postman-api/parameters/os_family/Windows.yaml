@@ -9,5 +9,6 @@ values:
     download_sig: ''
     download_uri: 'https://dl.pstmn.io/download/latest/win64'
     name: 'postman-api'
+    version: 'latest'
   service: {}
 ...
