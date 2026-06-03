@@ -1,4 +1,4 @@
-nosql-booster:
+postman-api:
   lookup:
     {%- if grains.os_family == "RedHat" %}
     pkg:
