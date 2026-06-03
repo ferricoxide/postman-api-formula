@@ -4,15 +4,19 @@
 # Set default values.
 ---
 values:
+  config:
+    desktop_entry: ''
+    icon_source: ''
+    install_root: ''
+    sandbox_enabled: true
+    selinux_fcontext: ''
+    ssl_min_version: ''
+    update_mime_database: ''
+    whitelist_enabled: false
+    wrapper_bin: ''
   pkg:
-    name: postman-api
-  rootgroup: root
-  config: '/etc/postman-api'
-  service:
-    name: postman-api
-  subcomponent:
-    config: '/etc/postman-api-subcomponent-formula.conf'
-  # Just here for testing
-  added_in_defaults: defaults_value
-  winner: defaults
+    download_sig: ''
+    download_uri: ''
+    name: 'postman-api'
+  service: {}
 ...
