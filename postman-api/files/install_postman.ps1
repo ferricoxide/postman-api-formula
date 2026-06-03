@@ -7,16 +7,23 @@
     desktop shortcuts, this script orchestrates a monitored extraction,
     terminates the stuck processes, migrates binaries to a global target
     root, and purges the temporary system profile staging directories.
+.PARAMETER DownloadUri
+    The fully qualified download URI for the installer package.
 .PARAMETER InstallRoot
     The system-wide path where the Postman application binaries will be
     permanently copied (e.g., 'C:\Program Files\Postman').
 .PARAMETER TargetVersion
     The specific version string expected for the deployment (e.g., '12.13.4').
 .EXAMPLE
-    .\install_postman.ps1 -InstallRoot "C:\Program Files\Postman" `
-        -TargetVersion "12.13.4"
+    .\install_postman.ps1 `
+        -DownloadUri "https://dl.pstmn.io/download/latest/win64" `
+        -InstallRoot "C:\Program Files\Postman" `
+        -TargetVersion "latest"
 #>
 param (
+    [Parameter(Mandatory = $true)]
+    [string]$DownloadUri,
+
     [Parameter(Mandatory = $true)]
     [string]$InstallRoot,
 
@@ -25,11 +32,30 @@ param (
 )
 
 # Guard block ensuring version-based script idempotency
-$ExePath = Join-Path $InstallRoot 'Postman.exe'
-if (Test-Path $ExePath) {
-    $CurrentVersion = (Get-Item $ExePath).VersionInfo.ProductVersion
-    if ($CurrentVersion -match $TargetVersion) {
-        Write-Host "Postman version $CurrentVersion is up to date. Exiting."
+$PostmanExePath = Join-Path $InstallRoot 'Postman.exe'
+if (Test-Path $PostmanExePath) {
+    $FileInfo = Get-Item $PostmanExePath
+    $InstalledProductVersion = $FileInfo.VersionInfo.ProductVersion
+    
+    $IsVendorUrl = $DownloadUri -like '*dl.pstmn.io*'
+    if ($TargetVersion -eq 'latest' -and $IsVendorUrl) {
+        $BaseUrl = 'https://dl.pstmn.io/update/status'
+        $Query = '?currentVersion=12.0.0&platform=win64'
+        $StatusUrl = $BaseUrl + $Query
+        $RestArgs = @{
+            ErrorAction = 'SilentlyContinue'
+            Uri         = $StatusUrl
+        }
+        $UpdateStatus = Invoke-RestMethod @RestArgs
+        if ($UpdateStatus -and $UpdateStatus.version) {
+            $TargetVersion = $UpdateStatus.version
+        }
+    }
+    
+    $IsLatestMatched = $TargetVersion -eq 'latest'
+    $IsVersionMatch = $InstalledProductVersion -match $TargetVersion
+    if ($IsLatestMatched -or $IsVersionMatch) {
+        Write-Host "Postman version $InstalledProductVersion is up to date."
         exit 0
     }
 }
