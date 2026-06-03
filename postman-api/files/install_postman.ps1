@@ -10,13 +10,29 @@
 .PARAMETER InstallRoot
     The system-wide path where the Postman application binaries will be
     permanently copied (e.g., 'C:\Program Files\Postman').
+.PARAMETER TargetVersion
+    The specific version string expected for the deployment (e.g., '12.13.4').
 .EXAMPLE
-    .\install_postman.ps1 -InstallRoot "C:\Program Files\Postman"
+    .\install_postman.ps1 -InstallRoot "C:\Program Files\Postman" `
+        -TargetVersion "12.13.4"
 #>
 param (
     [Parameter(Mandatory = $true)]
-    [string]$InstallRoot
+    [string]$InstallRoot,
+
+    [Parameter(Mandatory = $true)]
+    [string]$TargetVersion
 )
+
+# Guard block ensuring version-based script idempotency
+$ExePath = Join-Path $InstallRoot 'Postman.exe'
+if (Test-Path $ExePath) {
+    $CurrentVersion = (Get-Item $ExePath).VersionInfo.ProductVersion
+    if ($CurrentVersion -match $TargetVersion) {
+        Write-Host "Postman version $CurrentVersion is up to date. Exiting."
+        exit 0
+    }
+}
 
 $SetupExe = 'C:\Windows\Temp\PostmanSetup.exe'
 $StartArgs = @{
