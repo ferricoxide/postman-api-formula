@@ -1,0 +1,13 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+---
+values:
+  config:
+    install_root: 'C:\Program Files\Postman'
+    wrapper_bin: 'C:\Program Files\Postman\postman.cmd'
+  pkg:
+    download_sig: ''
+    download_uri: 'https://dl.pstmn.io/download/latest/win64'
+    name: 'postman-api'
+  service: {}
+...
