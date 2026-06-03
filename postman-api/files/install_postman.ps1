@@ -14,6 +14,9 @@
     permanently copied (e.g., 'C:\Program Files\Postman').
 .PARAMETER TargetVersion
     The specific version string expected for the deployment (e.g., '12.13.4').
+.PARAMETER CheckOnly
+    A switch flag to return the system validation status to the caller
+    without invoking downloading or extraction sequences.
 .EXAMPLE
     .\install_postman.ps1 `
         -DownloadUri "https://dl.pstmn.io/download/latest/win64" `
@@ -28,7 +31,9 @@ param (
     [string]$InstallRoot,
 
     [Parameter(Mandatory = $true)]
-    [string]$TargetVersion
+    [string]$TargetVersion,
+
+    [switch]$CheckOnly
 )
 
 # Guard block ensuring version-based script idempotency
@@ -58,6 +63,12 @@ if (Test-Path $PostmanExePath) {
         Write-Host "Postman version $InstalledProductVersion is up to date."
         exit 0
     }
+}
+
+# If execution reaches here, the package is missing or outdated.
+if ($CheckOnly) {
+    Write-Host "Postman requires installation or update."
+    exit 1
 }
 
 $SetupExe = 'C:\Windows\Temp\PostmanSetup.exe'
