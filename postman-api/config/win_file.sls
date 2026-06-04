@@ -7,6 +7,8 @@
 
 Configure Postman Desktop Shortcut:
   shortcut.present:
+    - icon_index: 0
+    - icon_location: '{{ postman_api.config.install_root }}\Postman.exe'
     - name: 'C:\Users\Public\Desktop\Postman.lnk'
     - target: '{{ postman_api.config.install_root }}\Postman.exe'
     - working_dir: '{{ postman_api.config.install_root }}'
@@ -19,10 +21,12 @@ Configure Process Mitigation Exclusions:
         -Disable DisallowChildProcessCreation
     - shell: powershell
     - unless: >-
-        $m = Get-ProcessMitigation -Name Postman.exe
-        -ErrorAction SilentlyContinue;
-        if ($m.ChildProcess.DisallowChildProcessCreation
-        -eq 'OFF') { exit 0 } else { exit 1 }
+        $postmanProcessMitigation = Get-ProcessMitigation
+        -Name Postman.exe -ErrorAction SilentlyContinue;
+        $childProcessStatus = $postmanProcessMitigation.
+        ChildProcess.DisallowChildProcessCreation;
+        if ($childProcessStatus -eq 'OFF') { exit 0 }
+        else { exit 1 }
 
 Configure Protocol Deep Linking Base:
   reg.present:
@@ -47,6 +51,8 @@ Configure Protocol Deep Linking Protocol Value:
 
 Configure Start Menu Shortcut:
   shortcut.present:
+    - icon_index: 0
+    - icon_location: '{{ postman_api.config.install_root }}\Postman.exe'
     - name: 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Postman.lnk'
     - target: '{{ postman_api.config.install_root }}\Postman.exe'
     - working_dir: '{{ postman_api.config.install_root }}'
