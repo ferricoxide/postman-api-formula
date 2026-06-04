@@ -7,6 +7,7 @@
 
 Configure Postman Desktop Shortcut:
   shortcut.present:
+    - arguments: '--window-size=1024,768 --force-device-scale-factor=0.85'
     - icon_index: 0
     - icon_location: '{{ postman_api.config.install_root }}\Postman.exe'
     - name: 'C:\Users\Public\Desktop\Postman.lnk'
@@ -51,6 +52,7 @@ Configure Protocol Deep Linking Protocol Value:
 
 Configure Start Menu Shortcut:
   shortcut.present:
+    - arguments: '--window-size=1024,768 --force-device-scale-factor=0.85'
     - icon_index: 0
     - icon_location: '{{ postman_api.config.install_root }}\Postman.exe'
     - name: 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Postman.lnk'
