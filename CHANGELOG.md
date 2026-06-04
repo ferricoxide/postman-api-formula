@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+### 0.1.1
+
+**Released**: 2026.06.04
+
+**Summary**:
+
+*   Added Windows functionality
+    *   Installs the Postman API binary (as downloaded from [vendor site](https://www.postman.com/downloads/))
+        *   Install-location defaults to `C:\Program Files\Postman`
+        *   Install-location overrideable via Pillar's `install_root` parameter
+        *   Installs latest installable version &mdash; v12.13.5 as of this document's writing (override via Pillar's `download_uri` parameter)
+    *   Sets appropriate ownerships, permissions, etc. on content loaded into `install_root`
+    *   Creates a desktop-launcher icon for all users
+    *   Creates a launcher icon in the `Start` menus for all users
+    *   Configures the launchers to constrain the initial-startup window to 85% of the display size
+*   Adds CI tests for Windows platforms (currently Windows Server 2019, 2022 and 2025)
+*   Updates pillar.example to explain Windows-specific parameters/inputs that may be specified via Pillar
+*   Update README with platform-notes
+
 ### 0.1.0
 
 **Released**: 2026.06.02

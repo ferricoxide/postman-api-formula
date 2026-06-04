@@ -18,5 +18,6 @@ values:
     download_sig: ''
     download_uri: ''
     name: 'postman-api'
+    version: 'latest'
   service: {}
 ...

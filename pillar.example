@@ -3,14 +3,15 @@
 ---
 postman-api:
   config:
-    # Path where the system desktop entry file will be generated.
+    # Path where the system desktop entry file will be generated (Linux only).
     desktop_entry: '/usr/share/applications/postman.desktop'
 
     # Relative path to the application icon inside the installation directory.
     icon_source: '/app/resources/app/assets/icon.png'
 
     # The root directory tree where the application archive is extracted.
-    # Natively supports paths containing spaces (e.g., '/opt/Desktop Apps/Postman').
+    # Natively supports Linux paths and Windows filesystem paths
+    # (e.g., 'C:\Program Files\Postman').
     install_root: '/opt/Postman'
 
     # Controls Chromium's internal application isolation sandbox layer.
@@ -35,6 +36,8 @@ postman-api:
     whitelist_enabled: true
 
     # The system path for the generated wrapper execution bash script.
+    # Supports Linux paths and Windows execution script pathways
+    # (e.g., 'C:\Program Files\Postman\postman.cmd').
     wrapper_bin: '/usr/local/bin/postman'
 
   pkg:
@@ -48,4 +51,8 @@ postman-api:
 
     # The internal name designation used for formula mapping identification.
     name: 'postman-api'
+
+    # The target application version string expected for the deployment
+    # (e.g., '12.13.5' or 'latest'). Used primarily by Windows targets.
+    version: 'latest'
 ...

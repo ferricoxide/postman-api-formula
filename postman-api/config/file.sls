@@ -13,6 +13,7 @@ include:
   - postman-api.config.lin_file
 {%- elif grains.kernel == "Windows" %}
   - postman-api.config.win_file
+  - postman-api.config.win_readiness
 {%- endif %}
 
 Avoid being a null-router (config/file) - Postman API:
