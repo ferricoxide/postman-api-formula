@@ -10,11 +10,13 @@ Configure Process Mitigation Exclusions:
     - name: >-
         Set-ProcessMitigation
         -Name Postman.exe
-        -Disable ChildProcess
+        -Disable DisallowChildProcessCreation
     - shell: powershell
     - unless: >-
-        if ((Get-ProcessMitigation -Name Postman.exe).ChildProcess.Type
-        -eq 'None') { exit 0 } else { exit 1 }
+        $m = Get-ProcessMitigation -Name Postman.exe
+        -ErrorAction SilentlyContinue;
+        if ($m.ChildProcess.DisallowChildProcessCreation
+        -eq 'OFF') { exit 0 } else { exit 1 }
 
 Harden Postman Directory Permissions:
   file.directory:
