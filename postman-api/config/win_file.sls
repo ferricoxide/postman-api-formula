@@ -5,6 +5,13 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as postman_api with context %}
 
+Configure Postman Desktop Shortcut:
+  win_shortcut.present:
+    - force: true
+    - name: 'C:\Users\Public\Desktop\Postman.lnk'
+    - target: '{{ postman_api.config.install_root }}\Postman.exe'
+    - working_dir: '{{ postman_api.config.install_root }}'
+
 Configure Process Mitigation Exclusions:
   cmd.run:
     - name: >-
@@ -17,6 +24,34 @@ Configure Process Mitigation Exclusions:
         -ErrorAction SilentlyContinue;
         if ($m.ChildProcess.DisallowChildProcessCreation
         -eq 'OFF') { exit 0 } else { exit 1 }
+
+Configure Protocol Deep Linking Base:
+  reg.present:
+    - name: 'HKLM\SOFTWARE\Classes\postman'
+    - vdata: 'URL:postman Protocol'
+    - vname: '(Default)'
+    - vtype: REG_SZ
+
+Configure Protocol Deep Linking Command:
+  reg.present:
+    - name: 'HKLM\SOFTWARE\Classes\postman\shell\open\command'
+    - vdata: '"{{ postman_api.config.install_root }}\Postman.exe" "%1"'
+    - vname: '(Default)'
+    - vtype: REG_SZ
+
+Configure Protocol Deep Linking Protocol Value:
+  reg.present:
+    - name: 'HKLM\SOFTWARE\Classes\postman'
+    - vdata: ''
+    - vname: 'URL Protocol'
+    - vtype: REG_SZ
+
+Configure Start Menu Shortcut:
+  win_shortcut.present:
+    - force: true
+    - name: 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Postman.lnk'
+    - target: '{{ postman_api.config.install_root }}\Postman.exe'
+    - working_dir: '{{ postman_api.config.install_root }}'
 
 Harden Postman Directory Permissions:
   file.directory:
