@@ -60,14 +60,14 @@ if (Test-Path $PostmanExePath) {
     $IsLatestMatched = $TargetVersion -eq 'latest'
     $IsVersionMatch = $InstalledProductVersion -match $TargetVersion
     if ($IsLatestMatched -or $IsVersionMatch) {
-        Write-Host "Postman version $InstalledProductVersion is up to date."
+        Write-Output "Postman version $InstalledProductVersion is up to date."
         exit 0
     }
 }
 
 # If execution reaches here, the package is missing or outdated.
 if ($CheckOnly) {
-    Write-Host "Postman requires installation or update."
+    Write-Output "Postman requires installation or update."
     exit 1
 }
 
