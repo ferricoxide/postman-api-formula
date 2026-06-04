@@ -6,8 +6,7 @@
 {%- from tplroot ~ "/map.jinja" import mapdata as postman_api with context %}
 
 Configure Postman Desktop Shortcut:
-  win_shortcut.present:
-    - force: true
+  shortcut.present:
     - name: 'C:\Users\Public\Desktop\Postman.lnk'
     - target: '{{ postman_api.config.install_root }}\Postman.exe'
     - working_dir: '{{ postman_api.config.install_root }}'
@@ -47,8 +46,7 @@ Configure Protocol Deep Linking Protocol Value:
     - vtype: REG_SZ
 
 Configure Start Menu Shortcut:
-  win_shortcut.present:
-    - force: true
+  shortcut.present:
     - name: 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Postman.lnk'
     - target: '{{ postman_api.config.install_root }}\Postman.exe'
     - working_dir: '{{ postman_api.config.install_root }}'
