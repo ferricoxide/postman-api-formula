@@ -5,14 +5,12 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as postman_api with context %}
 
-postman_api_environment_path:
-  environ.setenv:
-    - name: PATH
-    - update_with: path
-    - value: '{{ postman_api.config.install_root }}'
+Configure Postman API into System PATH Entry:
+  win_path.exists:
+    - name: '{{ postman_api.config.install_root }}'
 
-postman_api_telemetry_opt_out:
+Opt Out of Postman API Telemetry:
   environ.setenv:
     - name: POSTMAN_DISABLE_TELEMETRY
-    - update_with: xappend
+    - permanent: HKLM
     - value: '1'
