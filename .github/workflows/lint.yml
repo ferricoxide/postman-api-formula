@@ -9,3 +9,38 @@ concurrency:
 jobs:
   lint:
     uses: plus3it/actions-workflows/.github/workflows/lint.yml@ddd67e99878a285f728de398c1116151c2d7791a
+
+  lint_powershell:
+    name: PowerShell Linting
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Run PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path ./ -Include *.ps1 -Recurse
+          Write-Host "--- Starting PowerShell Static Analysis ---"
+
+          $anyErrors = $false
+
+          foreach ($file in $files) {
+              $relativePath = $file.FullName.Replace($PWD.ProviderPath, ".")
+              $results = Invoke-ScriptAnalyzer -Path $file.FullName -Severity Warning
+
+              if ($results) {
+                  Write-Host "FAIL: $relativePath" -ForegroundColor Red
+                  $results | Format-Table -AutoSize
+                  $anyErrors = $true
+              } else {
+                  Write-Host "PASS: $relativePath" -ForegroundColor Green
+              }
+          }
+
+          if ($anyErrors) {
+              Write-Error "Static analysis failed. Please fix the errors above."
+              exit 1
+          } else {
+              Write-Host "--- All files passed analysis! ---"
+          }
